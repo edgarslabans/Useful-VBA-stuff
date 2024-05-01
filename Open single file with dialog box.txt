@@ -1,0 +1,29 @@
+Sub CopyValueFromSelectedWorkbook()
+    Dim selectedFilePath As Variant
+    Dim selectedWorkbook As Workbook
+    Dim selectedWorksheet As Worksheet
+    Dim currentValue As Variant
+    
+    ' Prompt user to select a workbook
+    selectedFilePath = Application.GetOpenFilename(FileFilter:="Excel Files (*.xls; *.xlsx), *.xls; *.xlsx", Title:="Select Workbook to Open")
+    
+    If selectedFilePath = False Then
+        MsgBox "No workbook selected. Exiting."
+        Exit Sub
+    End If
+    
+    ' Open the selected workbook
+    Set selectedWorkbook = Workbooks.Open(selectedFilePath)
+    
+    ' Set the selected worksheet
+    Set selectedWorksheet = selectedWorkbook.Sheets(1) ' Change index if needed
+    
+    ' Get the value from cell L21 of the selected worksheet and print the result
+    currentValue = selectedWorksheet.Range("Gevolgklasse").Value
+    
+    Debug.Print "L21 val", currentValue
+ 
+
+    ' Close the selected workbook without saving changes
+    selectedWorkbook.Close False
+End Sub
