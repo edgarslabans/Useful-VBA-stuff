@@ -1,0 +1,77 @@
+
+
+Sub Iterate_files()
+    Dim folderPath As String
+    Dim fileSystem As Object
+    Dim file As Object
+    Dim i As Integer
+    Dim oldFileNames As Variant
+    Dim newFileNames As Variant
+    
+
+    
+     Application.ScreenUpdating = False     '' anti- flickering
+    
+    
+    ' Set the folder path
+    folderPath = Range("price_folder").Value ' Update this with the range containing the path to your folder
+    
+    ' Create a new instance of the FileSystemObject
+    Set fileSystem = CreateObject("Scripting.FileSystemObject")
+    
+    ' Clear previous data
+    Range("AD12:AE20").ClearContents
+    
+    ' Write headers
+    Range("AD12").Value = "Date Modified"
+    Range("AE12").Value = "File Name"
+    
+    ' for writing result starting from line 13
+    i = 13
+    
+    ' Get the old file names
+    oldFileNames = WorksheetFunction.Transpose(Range("AE13:AE17").Value)
+    
+    ' Loop through each file in the folder
+    For Each file In fileSystem.GetFolder(folderPath).Files
+    
+    
+        ''switch between multibeams and Accessories
+        If InStr(LCase(file.Name), "ancil") > 0 Then
+            CompareAndUpdateThirdColumnAccessories folderPath & "\" & file.Name				'' post-processing of each file
+        Else
+            CompareAndUpdateThirdColumn folderPath & "\" & file.Name
+        End If
+            
+        
+        ' Write date modified to column AD
+        Cells(i, 30).Value = file.DateLastModified
+        ' Write file name to column AE
+        Cells(i, 31).Value = file.Name
+        ' Move to the next row
+        i = i + 1
+    Next file
+    
+    ' Get the new file names
+    newFileNames = WorksheetFunction.Transpose(Range("AE13:AE17").Value)
+    
+    ' Check if there are differences in filenames or if the number of files differs
+'    If Not IsArrayEqual(oldFileNames, newFileNames) Or UBound(oldFileNames) <> UBound(newFileNames) Then
+'        MsgBox "File names and dates have been renewed.", vbInformation
+'
+'    Else
+'        MsgBox "No changes in file names and dates.", vbInformation
+'    End If
+    
+    
+    ''CompareAndUpdateThirdColumn "C:\Users\edgars.labans\OneDrive - Kingspan\Desktop\eeeeeeeeeeee\Kostprijzen new\Q1 24 Beam 095 Flange Costings - TOTALS.xlsx"
+  
+    
+    ' Release object variables
+    Set fileSystem = Nothing
+    Set file = Nothing
+    
+     Application.ScreenUpdating = True
+     
+    
+End Sub
